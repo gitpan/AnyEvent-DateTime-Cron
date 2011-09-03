@@ -1,6 +1,9 @@
 NAME
     AnyEvent::DateTime::Cron - AnyEvent crontab with DateTime::Event::Cron
 
+VERSION
+    version 0.02
+
 SYNOPSIS
         AnyEvent::DateTime::Cron->new()
             ->add(
@@ -12,12 +15,8 @@ SYNOPSIS
 
         $cron = AnyEvent::DateTime::Cron->new();
         $cron->debug(1)->add(
-            {
-                cron => '* * * * *',
-                cb   => sub {'foo'},
-                name => 'job_name_for_debugging'
-            },
-            {...}.
+            '* * * * *', name   => 'job_name', single => 1,  sub {'foo'},
+            ...
         );
 
         $cron->delete($job_id,$job_id...)
@@ -40,20 +39,19 @@ METHODS
 
   add()
         $cron->add(
-            '* * * * *'     => sub {...},
-            {
-                cron => '* * * * *',
-                cb   => sub {...},
-                name => 'my_job'
-            }
+            '* * * * *',                                     sub {...},
+            '* * * * *', name   => 'job_name', single => 1,  sub {...},
+            ...
         );
 
-    Use "add()" to add new cron jobs. It accepts a list of crontab entries
-    and callbacks, or alternatively, a list of hashrefs with named
-    parameters. The latter allows you to pass in an optional "name"
-    parameter, which can be useful for debugging.
+    Use "add()" to add new cron jobs. It accepts a list of crontab entries,
+    optional paremeters and callbacks.
 
-    Each new job is assigned an ID.
+    The "name" parameter is useful for debugging, otherwise the
+    auto-assigned "ID" is used instead.
+
+    The "single" parameter, if "true", will only allow a single instance of
+    a job to run at any one time.
 
     New jobs can be added before running, or while running.
 
@@ -78,7 +76,7 @@ METHODS
         $cron->stop()
 
     Used to shutdown the cron loop gracefully. You can also shutdown the
-    cron loop by sending a "HUP" signal to the process.
+    cron loop by sending a "TERM" signal to the process.
 
   jobs()
         $job = $cron->jobs
@@ -118,30 +116,14 @@ CALLBACKS
     Callbacks are called inside an "eval" so if they throw an error, they
     will warn, but won't cause the cron loop to exit.
 
+    1;
+
 AUTHOR
-    Clinton Gormley, "<drtech at cpan.org>"
+    Clinton Gormley <drtech@cpan.org>
 
-BUGS
-    If you have any suggestions for improvements, or find any bugs, please
-    report them to
-    <http://github.com/clintongormley/AnyEvent-DateTime-Cron/issues>. I will
-    be notified, and then you'll automatically be notified of progress on
-    your bug as I make changes.
+COPYRIGHT AND LICENSE
+    This software is copyright (c) 2011 by Clinton Gormley.
 
-SUPPORT
-    You can find documentation for this module with the perldoc command.
-
-        perldoc AnyEvent::DateTime::Cron
-
-    You can also look for information at
-    <http://github.com/clintongormley/AnyEvent-DateTime-Cron>
-
-LICENSE AND COPYRIGHT
-    Copyright 2011 Clinton Gormley.
-
-    This program is free software; you can redistribute it and/or modify it
-    under the terms of either: the GNU General Public License as published
-    by the Free Software Foundation; or the Artistic License.
-
-    See http://dev.perl.org/licenses/ for more information.
+    This is free software; you can redistribute it and/or modify it under
+    the same terms as the Perl 5 programming language system itself.
 

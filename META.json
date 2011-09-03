@@ -1,10 +1,10 @@
 {
    "abstract" : "AnyEvent crontab with DateTime::Event::Cron",
    "author" : [
-      "Clinton Gormley <drtech@traveljury.com>"
+      "Clinton Gormley <drtech@cpan.org>"
    ],
-   "dynamic_config" : 1,
-   "generated_by" : "Module::Build version 0.38, CPAN::Meta::Converter version 2.110930",
+   "dynamic_config" : 0,
+   "generated_by" : "Dist::Zilla version 4.300000, CPAN::Meta::Converter version 2.110930",
    "license" : [
       "perl_5"
    ],
@@ -16,33 +16,40 @@
    "prereqs" : {
       "build" : {
          "requires" : {
-            "Test::More" : 0
+            "Module::Build" : "0.3601"
          }
       },
       "configure" : {
          "requires" : {
-            "Module::Build" : "0.38"
+            "Module::Build" : "0.3601"
          }
       },
       "runtime" : {
          "requires" : {
             "AnyEvent" : 0,
             "DateTime" : 0,
-            "DateTime::Event::Cron" : "0.08"
+            "DateTime::Event::Cron" : 0,
+            "strict" : 0,
+            "warnings" : 0
          }
-      }
-   },
-   "provides" : {
-      "AnyEvent::DateTime::Cron" : {
-         "file" : "lib/AnyEvent/DateTime/Cron.pm",
-         "version" : "0.01"
+      },
+      "test" : {
+         "requires" : {
+            "Test::More" : 0
+         }
       }
    },
    "release_status" : "stable",
    "resources" : {
-      "license" : [
-         "http://dev.perl.org/licenses/"
-      ]
+      "bugtracker" : {
+         "web" : "https://github.com/clintongormley/AnyEvent-DateTime-Cron/issues"
+      },
+      "repository" : {
+         "type" : "git",
+         "url" : "git://github.com/clintongormley/AnyEvent-DateTime-Cron.git",
+         "web" : "https://github.com/clintongormley/AnyEvent-DateTime-Cron"
+      }
    },
-   "version" : "0.01"
+   "version" : "0.02"
 }
+

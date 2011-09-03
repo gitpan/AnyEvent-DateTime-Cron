@@ -5,8 +5,7 @@ use strict;
 use DateTime();
 use DateTime::Event::Cron();
 use AnyEvent();
-
-our $VERSION = 0.01;
+our $VERSION = 0.02;
 
 #===================================
 sub new {
@@ -27,25 +26,29 @@ sub add {
     my @args = ref $_[0] eq 'ARRAY' ? @{ shift() } : @_;
     while (@args) {
         my $cron = shift @args;
-        my ( $cb, $name );
-        if ( ref $cron eq 'HASH' ) {
-            ( $cron, $cb, $name ) = @{$cron}{qw(cron cb name)};
+        my ( $cb, %params );
+        while (@args) {
+            my $key = shift @args;
+            if ( ref $key eq 'CODE' ) {
+                $cb = $key;
+                last;
+            }
+            die "Unknown param '$key'"
+                unless $key =~ /^(name|single)$/;
+            $params{$key} = shift @args;
         }
-        else {
-            $cb = shift @args;
-        }
-
-        die "Illegal callback passed to add()"
-            unless ref $cb eq 'CODE';
+        die "No callback found for cron entry '$cron'"
+            unless $cb;
 
         my $event = DateTime::Event::Cron->new($cron);
         my $id    = ++$self->{_id};
-        my $job   = $self->{_jobs}{$id} = {
+        $params{name} ||= $id;
+        my $job = $self->{_jobs}{$id} = {
             event    => $event,
             cb       => $cb,
             id       => $id,
-            name     => $name || $id,
             watchers => {},
+            %params,
         };
 
         $self->_schedule($job)
@@ -59,7 +62,18 @@ sub delete {
 #===================================
     my $self = shift;
     my @ids = ref $_[0] eq 'ARRAY' ? @{ $_[0] } : @_;
-    delete $self->{_jobs}{$_} for @ids;
+
+    for (@ids) {
+        print STDERR "Deleting job '$_'\n"
+            if $self->{_debug};
+
+        if ( my $job = delete $self->{_jobs}{$_} ) {
+            $job->{watchers} = {};
+        }
+        elsif ( $self->{_debug} ) {
+            print STDERR "Job '$_' not found\n";
+        }
+    }
     return $self;
 }
 
@@ -72,9 +86,9 @@ sub start {
     $cv->begin( sub { $self->stop } );
 
     $self->{_signal} = AnyEvent->signal(
-        signal => 'HUP',
+        signal => 'TERM',
         cb     => sub {
-            print STDERR "Shutting down\n";
+            print STDERR "Shutting down\n" if $self->{_debug};
             $cv->end;
         }
     );
@@ -109,8 +123,7 @@ sub _schedule {
     my $debug     = $self->{_debug};
 
     for my $job (@_) {
-        my $name = $job->{name};
-
+        my $name       = $job->{name};
         my $next_run   = $job->{event}->next($now);
         my $next_epoch = $next_run->epoch;
         my $delay      = $next_epoch - $now_epoch;
@@ -121,17 +134,25 @@ sub _schedule {
         my $run_event = sub {
             print STDERR "Starting job '$name'\n"
                 if $debug;
+
             $self->{_cv}->begin;
             delete $job->{watchers}{$next_epoch};
 
             $self->_schedule($job);
 
-            eval { $job->{cb}->( $self->{_cv}, $job ); 1 }
-                or warn $@ || 'Unknown error';
+            if ( $job->{single} && $job->{running}++ ) {
+                print STDERR "Skipping job '$name' - still running\n"
+                    if $debug;
+            }
+            else {
+                eval { $job->{cb}->( $self->{_cv}, $job ); 1 }
+                    or warn $@ || 'Unknown error';
+                delete $job->{running};
+                print STDERR "Finished job '$name'\n"
+                    if $debug;
+            }
 
             $self->{_cv}->end;
-            print STDERR "Finished job '$name'\n"
-                if $debug;
         };
 
         $job->{watchers}{$next_epoch} = AnyEvent->timer(
@@ -154,11 +175,17 @@ sub jobs { shift->{_jobs} }
 #===================================
 
 1;
-__END__
+
+
+=pod
 
 =head1 NAME
 
 AnyEvent::DateTime::Cron - AnyEvent crontab with DateTime::Event::Cron
+
+=head1 VERSION
+
+version 0.02
 
 =head1 SYNOPSIS
 
@@ -172,12 +199,8 @@ AnyEvent::DateTime::Cron - AnyEvent crontab with DateTime::Event::Cron
 
     $cron = AnyEvent::DateTime::Cron->new();
     $cron->debug(1)->add(
-        {
-            cron => '* * * * *',
-            cb   => sub {'foo'},
-            name => 'job_name_for_debugging'
-        },
-        {...}.
+        '* * * * *', name   => 'job_name', single => 1,  sub {'foo'},
+        ...
     );
 
     $cron->delete($job_id,$job_id...)
@@ -204,20 +227,19 @@ Creates a new L<AnyEvent::DateTime::Cron> instance - takes no parameters.
 =head2 add()
 
     $cron->add(
-        '* * * * *'     => sub {...},
-        {
-            cron => '* * * * *',
-            cb   => sub {...},
-            name => 'my_job'
-        }
+        '* * * * *',                                     sub {...},
+        '* * * * *', name   => 'job_name', single => 1,  sub {...},
+        ...
     );
 
-Use C<add()> to add new cron jobs.  It accepts a list of crontab entries and
-callbacks, or alternatively, a list of hashrefs with named parameters. The
-latter allows you to pass in an optional C<name> parameter, which can
-be useful for debugging.
+Use C<add()> to add new cron jobs.  It accepts a list of crontab entries,
+optional paremeters and callbacks.
 
-Each new job is assigned an ID.
+The C<name> parameter is useful for debugging, otherwise the auto-assigned
+C<ID> is used instead.
+
+The C<single> parameter, if C<true>, will only allow a single instance of
+a job to run at any one time.
 
 New jobs can be added before running, or while running.
 
@@ -244,7 +266,7 @@ The cron loop can be started by calling C<recv()> on the condvar.
     $cron->stop()
 
 Used to shutdown the cron loop gracefully. You can also shutdown the cron loop
-by sending a C<HUP> signal to the process.
+by sending a C<TERM> signal to the process.
 
 =head2 jobs()
 
@@ -287,38 +309,23 @@ until your job has completed:
 Callbacks are called inside an C<eval> so if they throw an error, they
 will warn, but won't cause the cron loop to exit.
 
+1;
+
 =head1 AUTHOR
 
-Clinton Gormley, C<< <drtech at cpan.org> >>
+Clinton Gormley <drtech@cpan.org>
 
-=head1 BUGS
+=head1 COPYRIGHT AND LICENSE
 
-If you have any suggestions for improvements, or find any bugs, please report
-them to L<http://github.com/clintongormley/AnyEvent-DateTime-Cron/issues>.
-I will be notified, and then you'll automatically be notified of progress on
-your bug as I make changes.
+This software is copyright (c) 2011 by Clinton Gormley.
 
-=head1 SUPPORT
-
-You can find documentation for this module with the perldoc command.
-
-    perldoc AnyEvent::DateTime::Cron
-
-You can also look for information at
-L<http://github.com/clintongormley/AnyEvent-DateTime-Cron>
-
-
-=head1 LICENSE AND COPYRIGHT
-
-Copyright 2011 Clinton Gormley.
-
-This program is free software; you can redistribute it and/or modify it
-under the terms of either: the GNU General Public License as published
-by the Free Software Foundation; or the Artistic License.
-
-See http://dev.perl.org/licenses/ for more information.
-
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
 
 =cut
 
-1;
+
+__END__
+
+# ABSTRACT: AnyEvent crontab with DateTime::Event::Cron
+
