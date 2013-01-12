@@ -2,7 +2,7 @@ NAME
     AnyEvent::DateTime::Cron - AnyEvent crontab with DateTime::Event::Cron
 
 VERSION
-    version 0.02
+    version 0.03
 
 SYNOPSIS
         AnyEvent::DateTime::Cron->new()
@@ -52,6 +52,9 @@ METHODS
 
     The "single" parameter, if "true", will only allow a single instance of
     a job to run at any one time.
+
+    The "time_zone" parameter will set the time_zone for any DateTime
+    objects used.
 
     New jobs can be added before running, or while running.
 
@@ -116,13 +119,11 @@ CALLBACKS
     Callbacks are called inside an "eval" so if they throw an error, they
     will warn, but won't cause the cron loop to exit.
 
-    1;
-
 AUTHOR
     Clinton Gormley <drtech@cpan.org>
 
 COPYRIGHT AND LICENSE
-    This software is copyright (c) 2011 by Clinton Gormley.
+    This software is copyright (c) 2013 by Clinton Gormley.
 
     This is free software; you can redistribute it and/or modify it under
     the same terms as the Perl 5 programming language system itself.

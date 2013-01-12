@@ -18,7 +18,7 @@ my %module_build_args = (
     "Clinton Gormley <drtech\@cpan.org>"
   ],
   "dist_name" => "AnyEvent-DateTime-Cron",
-  "dist_version" => "0.02",
+  "dist_version" => "0.03",
   "license" => "perl",
   "module_name" => "AnyEvent::DateTime::Cron",
   "recommends" => {},
