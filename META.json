@@ -4,7 +4,7 @@
       "Clinton Gormley <drtech@cpan.org>"
    ],
    "dynamic_config" : 0,
-   "generated_by" : "Dist::Zilla version 4.300021, CPAN::Meta::Converter version 2.120630",
+   "generated_by" : "Dist::Zilla version 4.300029, CPAN::Meta::Converter version 2.120921",
    "license" : [
       "perl_5"
    ],
@@ -24,6 +24,11 @@
             "Module::Build" : "0.3601"
          }
       },
+      "develop" : {
+         "requires" : {
+            "Test::Pod" : "1.41"
+         }
+      },
       "runtime" : {
          "requires" : {
             "AnyEvent" : "0",
@@ -40,16 +45,6 @@
       }
    },
    "release_status" : "stable",
-   "resources" : {
-      "bugtracker" : {
-         "web" : "https://github.com/clintongormley/AnyEvent-DateTime-Cron/issues"
-      },
-      "repository" : {
-         "type" : "git",
-         "url" : "git://github.com/clintongormley/AnyEvent-DateTime-Cron.git",
-         "web" : "https://github.com/clintongormley/AnyEvent-DateTime-Cron"
-      }
-   },
-   "version" : "0.03"
+   "version" : "0.04"
 }
 

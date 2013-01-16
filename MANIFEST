@@ -7,7 +7,6 @@ META.yml
 README
 dist.ini
 lib/AnyEvent/DateTime/Cron.pm
-t.pl
 t/00-load.t
 t/manifest.t
 t/pod-coverage.t

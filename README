@@ -2,7 +2,7 @@ NAME
     AnyEvent::DateTime::Cron - AnyEvent crontab with DateTime::Event::Cron
 
 VERSION
-    version 0.03
+    version 0.04
 
 SYNOPSIS
         AnyEvent::DateTime::Cron->new()
@@ -24,6 +24,14 @@ SYNOPSIS
         $cv = $cron->start;
         $cv->recv;
 
+        AnyEvent::DateTime::Cron->new(time_zone => 'local');
+            ->add(
+                '* * * * *'   => sub { warn "Every minute"},
+                '*/2 * * * *' => sub { warn "Every second minute"},
+              )
+            ->start
+            ->recv
+
 DESCRIPTION
     AnyEvent::DateTime::Cron is an AnyEvent based crontab, which supports
     all crontab formats recognised by DateTime::Event::Cron.
@@ -33,9 +41,13 @@ DESCRIPTION
 
 METHODS
   new()
-        $cron = AnyEvent::DateTime::Cron->new();
+        $cron = AnyEvent::DateTime::Cron->new(
+            time_zone => ...
+        );
 
-    Creates a new AnyEvent::DateTime::Cron instance - takes no parameters.
+    Creates a new AnyEvent::DateTime::Cron instance - takes an optional
+    time_zone parameter that will be used to set the time_zone for any
+    DateTime objects that are used internally.
 
   add()
         $cron->add(
@@ -52,9 +64,6 @@ METHODS
 
     The "single" parameter, if "true", will only allow a single instance of
     a job to run at any one time.
-
-    The "time_zone" parameter will set the time_zone for any DateTime
-    objects used.
 
     New jobs can be added before running, or while running.
 
