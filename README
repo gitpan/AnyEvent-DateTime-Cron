@@ -2,7 +2,7 @@ NAME
     AnyEvent::DateTime::Cron - AnyEvent crontab with DateTime::Event::Cron
 
 VERSION
-    version 0.04
+    version 0.05
 
 SYNOPSIS
         AnyEvent::DateTime::Cron->new()
@@ -43,11 +43,19 @@ METHODS
   new()
         $cron = AnyEvent::DateTime::Cron->new(
             time_zone => ...
+            quartz    => 0/1
         );
 
-    Creates a new AnyEvent::DateTime::Cron instance - takes an optional
-    time_zone parameter that will be used to set the time_zone for any
-    DateTime objects that are used internally.
+    Creates a new AnyEvent::DateTime::Cron instance - takes optional
+    parameters time_zone and quartz.
+
+    time_zone can will be used to set the time_zone for any DateTime objects
+    that are used internally.
+
+    if quartz is set to a true value then this class will use switch to
+    using DateTime::Event::Cron::Quartz internally, which will allow the use
+    of seconds in the cron expression. See the DateTime::Event::Cron::Quartz
+    for details on writing a proper quartz cron expression.
 
   add()
         $cron->add(
@@ -128,8 +136,10 @@ CALLBACKS
     Callbacks are called inside an "eval" so if they throw an error, they
     will warn, but won't cause the cron loop to exit.
 
-AUTHOR
-    Clinton Gormley <drtech@cpan.org>
+AUTHORS
+    *   Clinton Gormley <drtech@cpan.org>
+
+    *   Andy Gorman <agorman@cpan.org>
 
 COPYRIGHT AND LICENSE
     This software is copyright (c) 2013 by Clinton Gormley.

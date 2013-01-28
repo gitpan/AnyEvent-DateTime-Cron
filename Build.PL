@@ -15,10 +15,11 @@ my %module_build_args = (
   },
   "dist_abstract" => "AnyEvent crontab with DateTime::Event::Cron",
   "dist_author" => [
-    "Clinton Gormley <drtech\@cpan.org>"
+    "Clinton Gormley <drtech\@cpan.org>",
+    "Andy Gorman <agorman\@cpan.org>"
   ],
   "dist_name" => "AnyEvent-DateTime-Cron",
-  "dist_version" => "0.04",
+  "dist_version" => "0.05",
   "license" => "perl",
   "module_name" => "AnyEvent::DateTime::Cron",
   "recommends" => {},
@@ -27,6 +28,7 @@ my %module_build_args = (
     "AnyEvent" => 0,
     "DateTime" => 0,
     "DateTime::Event::Cron" => 0,
+    "DateTime::Event::Cron::Quartz" => 0,
     "strict" => 0,
     "warnings" => 0
   },
