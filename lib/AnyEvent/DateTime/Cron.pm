@@ -6,7 +6,7 @@ use DateTime();
 use DateTime::Event::Cron();
 use DateTime::Event::Cron::Quartz();
 use AnyEvent();
-our $VERSION = 0.05;
+our $VERSION = 0.06;
 
 #===================================
 sub new {
@@ -20,7 +20,7 @@ sub new {
     $params{time_zone} = DateTime::TimeZone->new(name => $params{time_zone})
         if $params{time_zone};
 
-    $params{quartz} //= 0;
+    $params{quartz} = 0 unless defined $params{quartz};
 
     return bless {
         _jobs      => {},
@@ -218,7 +218,7 @@ AnyEvent::DateTime::Cron - AnyEvent crontab with DateTime::Event::Cron
 
 =head1 VERSION
 
-version 0.05
+version 0.06
 
 =head1 SYNOPSIS
 
