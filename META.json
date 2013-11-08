@@ -5,7 +5,7 @@
       "Andy Gorman <agorman@cpan.org>"
    ],
    "dynamic_config" : 0,
-   "generated_by" : "Dist::Zilla version 4.300032, CPAN::Meta::Converter version 2.120921",
+   "generated_by" : "Dist::Zilla version 5.006, CPAN::Meta::Converter version 2.120921",
    "license" : [
       "perl_5"
    ],
@@ -27,6 +27,8 @@
       },
       "develop" : {
          "requires" : {
+            "Test::More" : "0",
+            "Test::NoTabs" : "0",
             "Test::Pod" : "1.41"
          }
       },
@@ -48,15 +50,12 @@
    },
    "release_status" : "stable",
    "resources" : {
-      "bugtracker" : {
-         "web" : "https://github.com/clintongormley/AnyEvent-DateTime-Cron/issues"
-      },
       "repository" : {
          "type" : "git",
-         "url" : "git://github.com/clintongormley/AnyEvent-DateTime-Cron.git",
-         "web" : "https://github.com/clintongormley/AnyEvent-DateTime-Cron"
+         "url" : "git://github.com/agorman/AnyEvent-DateTime-Cron.git",
+         "web" : "https://github.com/agorman/AnyEvent-DateTime-Cron"
       }
    },
-   "version" : "0.06"
+   "version" : "0.07"
 }
 

@@ -6,7 +6,7 @@ use DateTime();
 use DateTime::Event::Cron();
 use DateTime::Event::Cron::Quartz();
 use AnyEvent();
-our $VERSION = 0.06;
+our $VERSION = 0.07;
 
 #===================================
 sub new {
@@ -212,13 +212,15 @@ sub jobs { shift->{_jobs} }
 
 =pod
 
+=encoding UTF-8
+
 =head1 NAME
 
 AnyEvent::DateTime::Cron - AnyEvent crontab with DateTime::Event::Cron
 
 =head1 VERSION
 
-version 0.06
+version 0.07
 
 =head1 SYNOPSIS
 
