@@ -6,7 +6,7 @@ use DateTime();
 use DateTime::Event::Cron();
 use DateTime::Event::Cron::Quartz();
 use AnyEvent();
-our $VERSION = 0.07;
+our $VERSION = 0.08;
 
 #===================================
 sub new {
@@ -220,7 +220,7 @@ AnyEvent::DateTime::Cron - AnyEvent crontab with DateTime::Event::Cron
 
 =head1 VERSION
 
-version 0.07
+version 0.08
 
 =head1 SYNOPSIS
 

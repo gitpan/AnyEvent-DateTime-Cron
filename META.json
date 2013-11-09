@@ -50,12 +50,15 @@
    },
    "release_status" : "stable",
    "resources" : {
+      "bugtracker" : {
+         "web" : "https://github.com/agorman/AnyEvent-DateTime-Cron/issues"
+      },
       "repository" : {
          "type" : "git",
          "url" : "git://github.com/agorman/AnyEvent-DateTime-Cron.git",
          "web" : "https://github.com/agorman/AnyEvent-DateTime-Cron"
       }
    },
-   "version" : "0.07"
+   "version" : "0.08"
 }
 

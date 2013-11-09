@@ -23,5 +23,6 @@ requires:
   strict: 0
   warnings: 0
 resources:
+  bugtracker: https://github.com/agorman/AnyEvent-DateTime-Cron/issues
   repository: git://github.com/agorman/AnyEvent-DateTime-Cron.git
-version: 0.07
+version: 0.08

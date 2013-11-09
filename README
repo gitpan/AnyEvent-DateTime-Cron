@@ -2,7 +2,7 @@ NAME
     AnyEvent::DateTime::Cron - AnyEvent crontab with DateTime::Event::Cron
 
 VERSION
-    version 0.07
+    version 0.08
 
 SYNOPSIS
         AnyEvent::DateTime::Cron->new()
